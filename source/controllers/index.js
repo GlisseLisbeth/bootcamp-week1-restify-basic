@@ -1,56 +1,17 @@
-import {defaultProfile} from '../datasets/default'
+import Profile from '../models/profile';
 
-class PROFILE {
-    resolveProfile () {
-        return defaultProfile
-    }
-    resolveFullProfile() {
-        try {
-            let updatedAt = new Date()
-            const profile =  this.resolveProfile()
+// create a profile
+exports.post = (req, res) => {
+	const data = Object.assign({}, req.body, { profile: req.profile.sub }) || {};
 
-            return {
-                ...profile,
-                updatedAt
-            }
-        } catch (error) {
-            throw error
-        }
-    }
-
-    resolveBasicProfile() {
-        try {
-            const profile = this.resolveProfile()
-            const {firstName, lastName, docNumber} = profile
-
-            return {
-                firstName,
-                lastName,
-                docNumber
-            }
-        } catch (error) {
-            throw error
-        }
-    }
-
-    resolveInfoProfile() {
-        try {
-            const profile = this.resolveProfile()
-            const {createdBy, createdAt, updatedAt} = profile
-
-            return {
-                createdAt,
-                createdBy,
-                updatedAt
-            }
-        } catch (error) {
-            throw error
-        }
-    }
-}
-
-export {
-    PROFILE
-}
+	Profile.create(data)
+		.then(profile => {
+			res.json(profile);
+		})
+		.catch(err => {
+			logger.error(err);
+			res.status(500).send(err);
+		});
+};
 
 

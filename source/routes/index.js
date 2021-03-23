@@ -1,40 +1,18 @@
 import { createServer } from 'restify';
-import {PROFILE} from '../controllers'
+import { Profile } from '../models/profile';
+import { mongoose} from 'mongoose';
 
 // por implementar Restify Router
 
-const profileController = new PROFILE()
-
 const server = createServer();
 
-server.get('/profile/full', (req, res)=> {
+server.post('/profiles', (req, res, next)=> {
     try {
-        const response = profileController.resolveFullProfile()
-        res.json(response)
-    } catch (error) {
-        res.json({
-            error: error.message,
-            success: false
-        })
-    }
-})
+        let data = req.body || {}
+        const ProfileModel = mongoose.model('Profile', Profile)
 
-server.get('/profile/basic', (req, res)=> {
-    try {
-        const response = profileController.resolveBasicProfile()
-        res.json(response)
-    } catch (error) {
-        res.json({
-            error: error.message,
-            success: false
-        })
-    }
-})
-
-server.get('/profile/info', (req, res)=> {
-    try {
-        const response = profileController.resolveInfoProfile()
-        res.json(response)
+		profile = new ProfileModel(data)
+        profile.save()
     } catch (error) {
         console.log("🚀 ~ server.get ~ error", error)
         res.json({
